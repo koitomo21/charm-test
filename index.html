@@ -1,6 +1,4 @@
-# Let's generate a full single-file index.html containing the complete HTML, CSS, JavaScript with Chart.js and LINE share link for this 50-question 5-charm-type diagnostic test.
-
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -63,7 +61,6 @@ html_content = """<!DOCTYPE html>
             margin-bottom: 25px;
         }
 
-        /* Screen Switcher */
         .screen {
             display: none;
         }
@@ -72,7 +69,6 @@ html_content = """<!DOCTYPE html>
             display: block;
         }
 
-        /* Start Screen */
         .start-btn, .action-btn {
             display: block;
             width: 100%;
@@ -105,7 +101,6 @@ html_content = """<!DOCTYPE html>
             border-radius: 10px;
         }
 
-        /* Question Progress */
         .progress-bar-container {
             width: 100%;
             height: 8px;
@@ -139,7 +134,6 @@ html_content = """<!DOCTYPE html>
             align-items: center;
         }
 
-        /* Options */
         .options-container {
             display: flex;
             flex-direction: column;
@@ -183,7 +177,6 @@ html_content = """<!DOCTYPE html>
             text-decoration: underline;
         }
 
-        /* Result Screen */
         .result-type-box {
             text-align: center;
             background: linear-gradient(135deg, #7b52b4, #9b6bcc);
@@ -371,7 +364,6 @@ html_content = """<!DOCTYPE html>
 </div>
 
 <script>
-    // 50 Questions List
     const questions = [
         "自分の「こうしたい」というアイデアや意見がどんどん出てくる",
         "プライドが高く、負けず嫌いである",
@@ -425,12 +417,6 @@ html_content = """<!DOCTYPE html>
         "ニュースなどの他人の話には、あまり興味がない"
     ];
 
-    // Mapping Questions to Charm Types (Indices 0..49)
-    // 王様: 0..9 (10 questions)
-    // 子供: 10..19 (10 questions)
-    // 貴族: 20..29 (10 questions)
-    // 社長: 30..39 (10 questions)
-    // 学者: 40..49 (10 questions)
     const typeMapping = [
         "王様", "王様", "王様", "王様", "王様", "王様", "王様", "王様", "王様", "王様",
         "子供", "子供", "子供", "子供", "子供", "子供", "子供", "子供", "子供", "子供",
@@ -439,7 +425,6 @@ html_content = """<!DOCTYPE html>
         "学者", "学者", "学者", "学者", "学者", "学者", "学者", "学者", "学者", "学者"
     ];
 
-    // Descriptions for each type
     const typeDescriptions = {
         "王様": "【王様タイプ】圧倒的なカリスマ性と存在感を持つあなた。自分の世界観や美意識を大切にし、人を惹きつける華やかさを持っています。周りからの注目を力に変えて輝くタイプです。",
         "子供": "【子供タイプ】自由な感性と高いクリエイティビティの持ち主。純粋な探求心やワクワクする楽しさを原動力に、周囲を笑顔にする無邪気な魅力にあふれています。",
@@ -512,7 +497,6 @@ html_content = """<!DOCTYPE html>
             percentages[type] = totalScore > 0 ? ((rawScores[type] / totalScore) * 100).toFixed(1) : 0;
         }
 
-        // Determine Main Type
         let mainType = "王様";
         let maxScore = -1;
         for (const type in rawScores) {
@@ -531,11 +515,9 @@ html_content = """<!DOCTYPE html>
 
         const { rawScores, percentages, mainType } = calculateScores();
 
-        // Show Main Type
         document.getElementById('main-type-name').textContent = mainType;
         document.getElementById('type-description').textContent = typeDescriptions[mainType];
 
-        // Populate Score Breakdown
         const scoreListContainer = document.getElementById('score-list');
         scoreListContainer.innerHTML = '';
         
@@ -550,10 +532,7 @@ html_content = """<!DOCTYPE html>
             scoreListContainer.appendChild(item);
         });
 
-        // Render Chart.js Pie Chart
         renderChart(percentages);
-
-        // Setup LINE Share Link
         setupLineShare(mainType, percentages);
     }
 
@@ -577,11 +556,11 @@ html_content = """<!DOCTYPE html>
                         percentages['学者']
                     ],
                     backgroundColor: [
-                        '#ff7675', // 王様 (Red/Pink)
-                        '#fdcb6e', // 子供 (Yellow)
-                        '#e84393', // 貴族 (Rose)
-                        '#6c5ce7', // 社長 (Purple)
-                        '#00cec9'  // 学者 (Teal)
+                        '#ff7675',
+                        '#fdcb6e',
+                        '#e84393',
+                        '#6c5ce7',
+                        '#00cec9'
                     ],
                     borderWidth: 2,
                     borderColor: '#ffffff'
@@ -614,7 +593,7 @@ html_content = """<!DOCTYPE html>
 
     function setupLineShare(mainType, percentages) {
         const shareUrl = window.location.href.split('#')[0];
-        const shareText = `【魅力タイプ診断結果】\\n私のメイン魅力タイプは「${mainType}タイプ」でした！\\n\\n【構成比】\\n・王様: ${percentages['王様']}%\\n・子供: ${percentages['子供']}%\\n・貴族: ${percentages['貴族']}%\\n・社長: ${percentages['社長']}%\\n・学者: ${percentages['学者']}%\\n\\nあなたは何タイプ？診断はこちら👇\\n${shareUrl}`;
+        const shareText = `【魅力タイプ診断結果】\n私のメイン魅力タイプは「${mainType}タイプ」でした！\n\n【構成比】\n・王様: ${percentages['王様']}%\n・子供: ${percentages['子供']}%\n・貴族: ${percentages['貴族']}%\n・社長: ${percentages['社長']}%\n・学者: ${percentages['学者']}%\n\nあなたは何タイプ？診断はこちら👇\n${shareUrl}`;
         
         const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
         document.getElementById('line-share-link').href = lineUrl;
@@ -628,9 +607,3 @@ html_content = """<!DOCTYPE html>
 
 </body>
 </html>
-"""
-
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-print("index.html successfully created! File length:", len(html_content))
