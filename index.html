@@ -8,14 +8,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            /* アイコンに合わせたパステルイエロー＆ピンク系 */
-            --primary-color: #f7a8b8;      /* メインの可愛いピンク */
-            --primary-hover: #e08ea0;      /* ホバー時のピンク */
-            --bg-color: #fffde8;           /* 背景のやわらかクリームイエロー */
-            --card-bg: #ffffff;            /* カード背景 */
-            --text-color: #5a4234;          /* アイコン文字に合わせたやわらかブラウン（視認性◎） */
-            --accent-color: #ffd166;        /* アクセントのきらめきイエロー */
-            --border-color: #ffe6a7;        /* 枠線のパステルカラー */
+            --primary-color: #f7a8b8;      
+            --primary-hover: #e08ea0;      
+            --bg-color: #fffde8;           
+            --card-bg: #ffffff;            
+            --text-color: #5a4234;          
+            --accent-color: #ffd166;        
+            --border-color: #ffe6a7;        
         }
 
         * {
@@ -163,7 +162,6 @@
             transition: all 0.15s ease;
         }
 
-        /* タップされた瞬間のスタイル */
         .option-btn.selected {
             background-color: #f7a8b8 !important;
             border-color: #f7a8b8 !important;
@@ -187,30 +185,37 @@
             text-decoration: underline;
         }
 
+        /* 🔍 コントラスト・可読性を大幅強化した「結果タイプボックス」 */
         .result-type-box {
             text-align: center;
-            background: linear-gradient(135deg, #f7a8b8, #ffd166);
-            color: #fff;
-            padding: 20px;
-            border-radius: 16px;
+            background: linear-gradient(135deg, #ffe0e9 0%, #fff2be 100%);
+            border: 2px solid #f7a8b8;
+            padding: 22px 15px;
+            border-radius: 18px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(247, 168, 184, 0.4);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(247, 168, 184, 0.25);
         }
 
         .result-type-box .label {
-            font-size: 0.9rem;
-            opacity: 0.95;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #4a3528; /* くっきり見えやすい深めブラウン */
+            letter-spacing: 1px;
         }
 
         .result-type-box .type-name {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin: 5px 0;
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: #b82e51; /* 華やかで視認性の高い深めのローズピンク */
+            margin: 8px 0;
             letter-spacing: 2px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 6px 15px;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: inset 0 0 5px rgba(247, 168, 184, 0.2);
         }
 
-        /* スクショ促進の可愛い吹き出し・案内文 */
         .screenshot-notice {
             background: #fff5f7;
             border: 2px dashed #f7a8b8;
@@ -307,6 +312,9 @@
                 padding: 12px 14px;
                 font-size: 0.95rem;
             }
+            .result-type-box .type-name {
+                font-size: 1.9rem;
+            }
         }
     </style>
 </head>
@@ -357,11 +365,10 @@
 
         <div class="result-type-box">
             <div class="label">あなたのメイン魅力タイプは</div>
-            <div id="main-type-name" class="type-name">社長</div>
+            <div id="main-type-name" class="type-name">👑 王様</div>
             <div class="label">タイプです！</div>
         </div>
 
-        <!-- 📸 スクショ案内文を追加！ -->
         <div class="screenshot-notice">
             📸 この画面をスクショして、SNSやLINEでみんなにシェアしてね！✨
         </div>
@@ -455,12 +462,20 @@
         "学者", "学者", "学者", "学者", "学者", "学者", "学者", "学者", "学者", "学者"
     ];
 
+    const typeIcons = {
+        "王様": "👑",
+        "子供": "🎈",
+        "貴族": "🎁",
+        "社長": "🏆",
+        "学者": "📘"
+    };
+
     const typeDescriptions = {
-        "王様": "【王様タイプ】圧倒的なカリスマ性と存在感を持つあなた。自分の世界観や美意識を大切にし、人を惹きつける華やかさを持っています。周りからの注目を力に変えて輝くタイプです。",
-        "子供": "【子供タイプ】自由な感性と高いクリエイティビティの持ち主。純粋な探求心やワクワクする楽しさを原動力に、周囲を笑顔にする無邪気な魅力にあふれています。",
-        "貴族": "【貴族タイプ】深い思いやりと調和を重んじるエレガントなあなた。細やかな配慮とサービス精神で周囲の人を包み込み、安心感を与える居心地の良い人間関係を作る天才です。",
-        "社長": "【社長タイプ】高い目標を掲げ、圧倒的な行動力とリーダーシップで成果を出すアチーバー。情熱と責任感を持って人を引っ張り、目に見える形で世界を動かすパワフルな魅力があります。",
-        "学者": "【学者タイプ】深い探求心と圧倒的な知性を備えたスペシャリスト。物事の本質を見抜き、専門的な知識や継続的な努力によって自分自身の成長や成果を追い求める知的で落ち着いた魅力を持っています。"
+        "王様": "【👑 王様タイプ】圧倒的なカリスマ性と存在感を持つあなた。自分の世界観や美意識を大切にし、人を惹きつける華やかさを持っています。周りからの注目を力に変えて輝くタイプです。",
+        "子供": "【🎈 子供タイプ】自由な感性と高いクリエイティビティの持ち主。純粋な探求心やワクワクする楽しさを原動力に、周囲を笑顔にする無邪気な魅力にあふれています。",
+        "貴族": "【🎁 貴族タイプ】深い思いやりと調和を重んじるエレガントなあなた。細やかな配慮とサービス精神で周囲の人を包み込み、安心感を与える居心地の良い人間関係を作る天才です。",
+        "社長": "【🏆 社長タイプ】高い目標を掲げ、圧倒的な行動力とリーダーシップで成果を出すアチーバー。情熱と責任感を持って人を引っ張り、目に見える形で世界を動かすパワフルな魅力があります。",
+        "学者": "【📘 学者タイプ】深い探求心と圧倒的な知性を備えたスペシャリスト。物事の本質を見抜き、専門的な知識や継続的な努力によって自分自身の成長や成果を追い求める知的で落ち着いた魅力を持っています。"
     };
 
     let currentQuestionIndex = 0;
@@ -566,7 +581,7 @@
 
         const { rawScores, percentages, mainType } = calculateScores();
 
-        document.getElementById('main-type-name').textContent = mainType;
+        document.getElementById('main-type-name').textContent = `${typeIcons[mainType]} ${mainType}`;
         document.getElementById('type-description').textContent = typeDescriptions[mainType];
 
         const scoreListContainer = document.getElementById('score-list');
@@ -577,7 +592,7 @@
             const item = document.createElement('div');
             item.className = 'score-item';
             item.innerHTML = `
-                <span class="type-title">${type}タイプ</span>
+                <span class="type-title">${typeIcons[type]} ${type}タイプ</span>
                 <span class="percentage">${percentages[type]}% (${rawScores[type]}点)</span>
             `;
             scoreListContainer.appendChild(item);
@@ -597,7 +612,7 @@
         chartInstance = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: ['王様', '子供', '貴族', '社長', '学者'],
+                labels: ['👑 王様', '🎈 子供', '🎁 貴族', '🏆 社長', '📘 学者'],
                 datasets: [{
                     data: [
                         percentages['王様'],
@@ -607,11 +622,11 @@
                         percentages['学者']
                     ],
                     backgroundColor: [
-                        '#ff7675',
-                        '#fdcb6e',
-                        '#e84393',
-                        '#6c5ce7',
-                        '#00cec9'
+                        '#c00000',
+                        '#ffc000',
+                        '#7030a0',
+                        '#385723',
+                        '#0070c0'
                     ],
                     borderWidth: 2,
                     borderColor: '#ffffff'
@@ -624,7 +639,7 @@
                         position: 'bottom',
                         labels: {
                             font: {
-                                size: 12,
+                                size: 13,
                                 weight: 'bold'
                             },
                             padding: 15
@@ -644,7 +659,7 @@
 
     function setupLineShare(mainType, percentages) {
         const shareUrl = window.location.href.split('#')[0];
-        const shareText = `【魅力タイプ診断結果】\n私のメイン魅力タイプは「${mainType}タイプ」でした！\n\n【構成比】\n・王様: ${percentages['王様']}%\n・子供: ${percentages['子供']}%\n・貴族: ${percentages['貴族']}%\n・社長: ${percentages['社長']}%\n・学者: ${percentages['学者']}%\n\nあなたは何タイプ？診断はこちら👇\n${shareUrl}`;
+        const shareText = `【魅力タイプ診断結果】\n私のメイン魅力タイプは「${typeIcons[mainType]} ${mainType}タイプ」でした！\n\n【構成比】\n👑 王様: ${percentages['王様']}%\n🎈 子供: ${percentages['子供']}%\n🎁 貴族: ${percentages['貴族']}%\n🏆 社長: ${percentages['社長']}%\n📘 学者: ${percentages['学者']}%\n\nあなたは何タイプ？診断はこちら👇\n${shareUrl}`;
         
         const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
         document.getElementById('line-share-link').href = lineUrl;
