@@ -22,6 +22,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを解除 */
         }
 
         body {
@@ -154,16 +155,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            outline: none;
         }
 
-        .option-btn:hover {
-            border-color: var(--primary-color);
-            background-color: #f7f3fd;
-            color: var(--primary-color);
+        /* スマホで押した後に色が付いたままにならないための設定 */
+        @media (hover: hover) {
+            .option-btn:hover {
+                border-color: var(--primary-color);
+                background-color: #f7f3fd;
+                color: var(--primary-color);
+            }
         }
 
         .option-btn:active {
             transform: scale(0.98);
+            background-color: #f7f3fd;
         }
 
         .prev-btn {
@@ -308,16 +314,16 @@
         <div id="question-text" class="question-text">質問がここに表示されます</div>
 
         <div class="options-container">
-            <button class="option-btn" onclick="selectOption(1)">
+            <button class="option-btn" onclick="selectOption(1, this)">
                 <span>全然ない</span> <span style="opacity:0.5;">(1点)</span>
             </button>
-            <button class="option-btn" onclick="selectOption(2)">
+            <button class="option-btn" onclick="selectOption(2, this)">
                 <span>ほとんどない</span> <span style="opacity:0.5;">(2点)</span>
             </button>
-            <button class="option-btn" onclick="selectOption(3)">
+            <button class="option-btn" onclick="selectOption(3, this)">
                 <span>割とそう</span> <span style="opacity:0.5;">(3点)</span>
             </button>
-            <button class="option-btn" onclick="selectOption(4)">
+            <button class="option-btn" onclick="selectOption(4, this)">
                 <span>かなりそう</span> <span style="opacity:0.5;">(4点)</span>
             </button>
         </div>
@@ -464,7 +470,10 @@
         }
     }
 
-    function selectOption(score) {
+    function selectOption(score, btnElement) {
+        if (btnElement) {
+            btnElement.blur(); // タップ時のフォーカス（色の固定）を解除
+        }
         answers[currentQuestionIndex] = score;
         currentQuestionIndex++;
 
