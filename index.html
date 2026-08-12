@@ -1,289 +1,641 @@
-<style>
-    :root {
-        /* アイコンに合わせたパステルイエロー＆ピンク系 */
-        --primary-color: #f7a8b8;      /* メインの可愛いピンク */
-        --primary-hover: #e08ea0;      /* ホバー時のピンク */
-        --bg-color: #fffde8;           /* 背景のやわらかクリームイエロー */
-        --card-bg: #ffffff;            /* カード背景 */
-        --text-color: #5a4234;          /* アイコン文字に合わせたやわらかブラウン（視認性◎） */
-        --accent-color: #ffd166;        /* アクセントのきらめきイエロー */
-        --border-color: #ffe6a7;        /* 枠線のパステルカラー */
-    }
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魅力タイプ診断</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* アイコンに合わせたパステルイエロー＆ピンク系 */
+            --primary-color: #f7a8b8;      /* メインの可愛いピンク */
+            --primary-hover: #e08ea0;      /* ホバー時のピンク */
+            --bg-color: #fffde8;           /* 背景のやわらかクリームイエロー */
+            --card-bg: #ffffff;            /* カード背景 */
+            --text-color: #5a4234;          /* アイコン文字に合わせたやわらかブラウン（視認性◎） */
+            --accent-color: #ffd166;        /* アクセントのきらめきイエロー */
+            --border-color: #ffe6a7;        /* 枠線のパステルカラー */
+        }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: "M PLUS Rounded 1c", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        -webkit-tap-highlight-color: transparent;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        line-height: 1.6;
-        padding: 20px 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-    .container {
-        max-width: 600px;
-        width: 100%;
-        background: var(--card-bg);
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(247, 168, 184, 0.2);
-        padding: 30px 20px;
-        position: relative;
-        overflow: hidden;
-        border: 3px solid #fff5c0;
-    }
-
-    h1 {
-        font-size: 1.6rem;
-        color: #d66880;
-        text-align: center;
-        margin-bottom: 10px;
-        font-weight: 700;
-    }
-
-    .subtitle {
-        text-align: center;
-        font-size: 0.9rem;
-        color: #8c7365;
-        margin-bottom: 25px;
-    }
-
-    .screen {
-        display: none;
-    }
-
-    .screen.active {
-        display: block;
-    }
-
-    .start-btn, .action-btn {
-        display: block;
-        width: 100%;
-        padding: 16px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        color: #fff;
-        background-color: #f7a8b8;
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
-        text-align: center;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 12px rgba(247, 168, 184, 0.4);
-        margin-top: 20px;
-        text-decoration: none;
-    }
-
-    .start-btn:hover, .action-btn:hover {
-        background-color: #e08ea0;
-        transform: translateY(-2px);
-    }
-
-    .intro-text {
-        font-size: 0.95rem;
-        color: var(--text-color);
-        margin-bottom: 20px;
-        background: #fffbe6;
-        border: 2px dashed #ffe58f;
-        padding: 15px;
-        border-radius: 12px;
-    }
-
-    .progress-bar-container {
-        width: 100%;
-        height: 10px;
-        background: #fff2d6;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        overflow: hidden;
-    }
-
-    .progress-bar {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #ffd166, #f7a8b8);
-        transition: width 0.3s ease;
-    }
-
-    .question-counter {
-        font-size: 0.85rem;
-        color: #d66880;
-        font-weight: bold;
-        text-align: right;
-        margin-bottom: 10px;
-    }
-
-    .question-text {
-        font-size: 1.15rem;
-        font-weight: 600;
-        margin-bottom: 25px;
-        min-height: 3rem;
-        display: flex;
-        align-items: center;
-        color: var(--text-color);
-    }
-
-    .options-container {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .option-btn {
-        background: #fff9ed;
-        border: 2px solid #ffe8b3;
-        padding: 14px 18px;
-        border-radius: 14px;
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-color);
-        cursor: pointer;
-        text-align: left;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        outline: none;
-        user-select: none;
-        transition: all 0.15s ease;
-    }
-
-    /* タップされた瞬間のスタイル */
-    .option-btn.selected {
-        background-color: #f7a8b8 !important;
-        border-color: #f7a8b8 !important;
-        color: #ffffff !important;
-        transform: scale(0.98);
-    }
-
-    .option-btn.selected span {
-        color: #ffffff !important;
-        opacity: 1 !important;
-    }
-
-    .prev-btn {
-        background: none;
-        border: none;
-        color: #a38c7d;
-        font-size: 0.9rem;
-        cursor: pointer;
-        margin-top: 20px;
-        display: inline-block;
-        text-decoration: underline;
-    }
-
-    .result-type-box {
-        text-align: center;
-        background: linear-gradient(135deg, #f7a8b8, #ffd166);
-        color: #fff;
-        padding: 20px;
-        border-radius: 16px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 15px rgba(247, 168, 184, 0.4);
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    }
-
-    .result-type-box .label {
-        font-size: 0.9rem;
-        opacity: 0.95;
-    }
-
-    .result-type-box .type-name {
-        font-size: 2.2rem;
-        font-weight: 800;
-        margin: 5px 0;
-        letter-spacing: 2px;
-    }
-
-    .chart-container {
-        position: relative;
-        width: 100%;
-        max-width: 320px;
-        margin: 0 auto 25px auto;
-    }
-
-    .score-list {
-        background: #fffdf5;
-        border: 2px solid #ffe8b3;
-        border-radius: 14px;
-        padding: 15px;
-        margin-bottom: 25px;
-    }
-
-    .score-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px dashed #ffd899;
-        font-size: 0.95rem;
-    }
-
-    .score-item:last-child {
-        border-bottom: none;
-    }
-
-    .score-item .type-title {
-        font-weight: bold;
-    }
-
-    .score-item .percentage {
-        font-weight: 700;
-        color: #d66880;
-    }
-
-    .type-desc {
-        background: #fff5f7;
-        border-left: 4px solid #f7a8b8;
-        padding: 15px;
-        font-size: 0.95rem;
-        line-height: 1.7;
-        margin-bottom: 25px;
-        border-radius: 0 12px 12px 0;
-        color: var(--text-color);
-    }
-
-    .line-share-btn {
-        background-color: #06C755;
-        box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .line-share-btn:hover {
-        background-color: #05b34c;
-    }
-
-    .retry-btn {
-        background: #f0e6df;
-        color: #665246;
-        box-shadow: none;
-        margin-top: 12px;
-    }
-
-    .retry-btn:hover {
-        background: #e2d4c9;
-    }
-
-    @media (max-width: 480px) {
         .container {
-            padding: 20px 15px;
+            max-width: 600px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(247, 168, 184, 0.2);
+            padding: 30px 20px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #fff5c0;
         }
+
+        h1 {
+            font-size: 1.6rem;
+            color: #d66880;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #8c7365;
+            margin-bottom: 25px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .start-btn, .action-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #f7a8b8;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(247, 168, 184, 0.4);
+            margin-top: 20px;
+            text-decoration: none;
+        }
+
+        .start-btn:hover, .action-btn:hover {
+            background-color: #e08ea0;
+            transform: translateY(-2px);
+        }
+
+        .intro-text {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            background: #fffbe6;
+            border: 2px dashed #ffe58f;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: #fff2d6;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ffd166, #f7a8b8);
+            transition: width 0.3s ease;
+        }
+
+        .question-counter {
+            font-size: 0.85rem;
+            color: #d66880;
+            font-weight: bold;
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
         .question-text {
-            font-size: 1.05rem;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            min-height: 3rem;
+            display: flex;
+            align-items: center;
+            color: var(--text-color);
         }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .option-btn {
-            padding: 12px 14px;
+            background: #fff9ed;
+            border: 2px solid #ffe8b3;
+            padding: 14px 18px;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+            user-select: none;
+            transition: all 0.15s ease;
+        }
+
+        /* タップされた瞬間のスタイル */
+        .option-btn.selected {
+            background-color: #f7a8b8 !important;
+            border-color: #f7a8b8 !important;
+            color: #ffffff !important;
+            transform: scale(0.98);
+        }
+
+        .option-btn.selected span {
+            color: #ffffff !important;
+            opacity: 1 !important;
+        }
+
+        .prev-btn {
+            background: none;
+            border: none;
+            color: #a38c7d;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: underline;
+        }
+
+        .result-type-box {
+            text-align: center;
+            background: linear-gradient(135deg, #f7a8b8, #ffd166);
+            color: #fff;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(247, 168, 184, 0.4);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .result-type-box .label {
+            font-size: 0.9rem;
+            opacity: 0.95;
+        }
+
+        .result-type-box .type-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 5px 0;
+            letter-spacing: 2px;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto 25px auto;
+        }
+
+        .score-list {
+            background: #fffdf5;
+            border: 2px solid #ffe8b3;
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed #ffd899;
             font-size: 0.95rem;
         }
+
+        .score-item:last-child {
+            border-bottom: none;
+        }
+
+        .score-item .type-title {
+            font-weight: bold;
+        }
+
+        .score-item .percentage {
+            font-weight: 700;
+            color: #d66880;
+        }
+
+        .type-desc {
+            background: #fff5f7;
+            border-left: 4px solid #f7a8b8;
+            padding: 15px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            border-radius: 0 12px 12px 0;
+            color: var(--text-color);
+        }
+
+        .line-share-btn {
+            background-color: #06C755;
+            box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .line-share-btn:hover {
+            background-color: #05b34c;
+        }
+
+        .retry-btn {
+            background: #f0e6df;
+            color: #665246;
+            box-shadow: none;
+            margin-top: 12px;
+        }
+
+        .retry-btn:hover {
+            background: #e2d4c9;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+            .question-text {
+                font-size: 1.05rem;
+            }
+            .option-btn {
+                padding: 12px 14px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen active">
+        <h1>✨ 魅力タイプ診断 ✨</h1>
+        <p class="subtitle">あなたの魅力を解き明かす50の質問</p>
+        <div class="intro-text">
+            直感で当てはまる選択肢を選んでください（全50問）。<br>
+            診断結果は<strong>円グラフ</strong>でわかりやすく表示され、LINEで簡単にシェアできます！
+        </div>
+        <button class="start-btn" onclick="startQuiz()">診断をスタートする</button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="screen">
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <div id="question-counter" class="question-counter">Q 1 / 50</div>
+        <div id="question-text" class="question-text">質問がここに表示されます</div>
+
+        <div class="options-container">
+            <button class="option-btn" onclick="selectOption(1, this)">
+                <span>全然ない</span> <span style="opacity:0.5;">(1点)</span>
+            </button>
+            <button class="option-btn" onclick="selectOption(2, this)">
+                <span>ほとんどない</span> <span style="opacity:0.5;">(2点)</span>
+            </button>
+            <button class="option-btn" onclick="selectOption(3, this)">
+                <span>割とそう</span> <span style="opacity:0.5;">(3点)</span>
+            </button>
+            <button class="option-btn" onclick="selectOption(4, this)">
+                <span>かなりそう</span> <span style="opacity:0.5;">(4点)</span>
+            </button>
+        </div>
+
+        <button id="prev-btn" class="prev-btn" onclick="prevQuestion()" style="display:none;">← 前の質問に戻る</button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="screen">
+        <h1>診断結果</h1>
+        <p class="subtitle">あなたの魅力タイプ構成比</p>
+
+        <div class="result-type-box">
+            <div class="label">あなたのメイン魅力タイプは</div>
+            <div id="main-type-name" class="type-name">社長</div>
+            <div class="label">タイプです！</div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-container">
+            <canvas id="charmChart"></canvas>
+        </div>
+
+        <!-- Percentage Breakdown -->
+        <div id="score-list" class="score-list">
+            <!-- Dynamic Insertion -->
+        </div>
+
+        <!-- Description -->
+        <div id="type-description" class="type-desc">
+            <!-- Description dynamic -->
+        </div>
+
+        <!-- LINE Share Button -->
+        <a id="line-share-link" class="action-btn line-share-btn" href="#" target="_blank" rel="noopener">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+                <path d="M12 2C6.48 2 2 5.82 2 10.53c0 4.23 3.61 7.78 8.48 8.42.33.07.78.22.89.51.1.26.07.67.03.94-.06.39-.28 1.52-.31 1.85-.05.51.24.51.5.34.26-.17 3.51-2.07 4.8-2.9 3.42-.51 5.61-2.98 5.61-6.63C22 5.82 17.52 2 12 2z"/>
+            </svg>
+            LINEで診断結果をシェアする
+        </a>
+
+        <button class="action-btn retry-btn" onclick="restartQuiz()">もう一度診断する</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        "自分の「こうしたい」というアイデアや意見がどんどん出てくる",
+        "プライドが高く、負けず嫌いである",
+        "自分のわがままが原因で、人とトラブルになったことがある",
+        "人から嫉妬されたり、嫌われたりすることが多い",
+        "人から自分だけ特別扱いを受けることが多い",
+        "目立ちたがり屋の人を見るとザワザワする",
+        "芸能人やアイドルなど、人前に出る仕事に憧れがある、もしくは就いている",
+        "顔やスタイルなどの外見を褒められることが、他の人と比べて多い",
+        "自分の中に、独自の美意識や世界観がある",
+        "よく自撮りをする",
+        "つい面白いことを言いたくなってしまう",
+        "予定をキッチリ立てるよりも、その時の気分でやることを決めたい",
+        "責任がある仕事や、出世にはあまり興味がない",
+        "旅行の計画などは自分で決めるより人が決めてくれたほうが楽だ",
+        "自分の意思で、何かしらの創作活動をしていたことがある",
+        "真面目に働いていない。もしくは真面目に働かない人を見るとザワザワする",
+        "アーティストやデザイナーなど、センスを活かす仕事に憧れる、もしくは就いている",
+        "独特だとか変わっていると言われることが、他の人と比べて多い",
+        "人に怒られることが何よりも苦手で、怒っている人を見るのもイヤ",
+        "活字よりも映像や音楽が好きだ",
+        "自分は人に影響されやすいと感じる",
+        "作り込まれた世界観があるものに惹かれる",
+        "サービス精神が旺盛である",
+        "自分が好きになった人には大体好かれる",
+        "狭く深い関係性の人だけと時間を過ごしたい",
+        "人の輪を乱すような人を見るとザワザワする",
+        "セレブ婚やパートナーシップに憧れがある、もしくはしている",
+        "センスを褒められることが、他の人と比べて多い",
+        "自分の意見を押し通すよりも人に合わせることが多い",
+        "リーダーシップを取ることや目立つことには興味がない",
+        "尊敬する人の中に、歴史上の人物や起業家など「世界を変えた」人がいる",
+        "人生とは何かを成し遂げるものだと思っている",
+        "学級委員や生徒会や部長などのリーダー格に自ら名乗り出たことがある",
+        "人に正論をぶつけてトラブルになることがある",
+        "上下関係や役割がはっきりしている人間関係の中にいると落ち着く",
+        "自己肯定感が低い人を見るとザワザワする",
+        "経営者や政治家、何かの代表など、名前が残る仕事に憧れがある",
+        "仕事っぷりを褒められることが、他の人と比べて多い",
+        "勝ち負けや目標があるほうが燃える",
+        "好きだけど人に評価されないことより、人に評価されることがしたい",
+        "自分が興味を持ったことに対してはとことん深く調べる",
+        "一人で何かに没頭している時間が一番幸せだ",
+        "何かを選ぶときはしっかりリサーチと比較検討してから決める",
+        "見えない壁がある、人に一線を越えさせないと言われることがある",
+        "具体的な目標を立て、地道に努力して実現した経験がある",
+        "目標を決めるときは選択肢の中のトップを狙うことが多い",
+        "自分の成長を自分自身で感じるときが一番うれしい",
+        "知識量を褒められることが、他の人と比べて多い",
+        "何か思いついてもすぐに行動には移さずじっくり検討する",
+        "ニュースなどの他人の話には、あまり興味がない"
+    ];
+
+    const typeMapping = [
+        "王様", "王様", "王様", "王様", "王様", "王様", "王様", "王様", "王様", "王様",
+        "子供", "子供", "子供", "子供", "子供", "子供", "子供", "子供", "子供", "子供",
+        "貴族", "貴族", "貴族", "貴族", "貴族", "貴族", "貴族", "貴族", "貴族", "貴族",
+        "社長", "社長", "社長", "社長", "社長", "社長", "社長", "社長", "社長", "社長",
+        "学者", "学者", "学者", "学者", "学者", "学者", "学者", "学者", "学者", "学者"
+    ];
+
+    const typeDescriptions = {
+        "王様": "【王様タイプ】圧倒的なカリスマ性と存在感を持つあなた。自分の世界観や美意識を大切にし、人を惹きつける華やかさを持っています。周りからの注目を力に変えて輝くタイプです。",
+        "子供": "【子供タイプ】自由な感性と高いクリエイティビティの持ち主。純粋な探求心やワクワクする楽しさを原動力に、周囲を笑顔にする無邪気な魅力にあふれています。",
+        "貴族": "【貴族タイプ】深い思いやりと調和を重んじるエレガントなあなた。細やかな配慮とサービス精神で周囲の人を包み込み、安心感を与える居心地の良い人間関係を作る天才です。",
+        "社長": "【社長タイプ】高い目標を掲げ、圧倒的な行動力とリーダーシップで成果を出すアチーバー。情熱と責任感を持って人を引っ張り、目に見える形で世界を動かすパワフルな魅力があります。",
+        "学者": "【学者タイプ】深い探求心と圧倒的な知性を備えたスペシャリスト。物事の本質を見抜き、専門的な知識や継続的な努力によって自分自身の成長や成果を追い求める知的で落ち着いた魅力を持っています。"
+    };
+
+    let currentQuestionIndex = 0;
+    let answers = new Array(50).fill(0);
+    let chartInstance = null;
+    let isProcessing = false;
+
+    function startQuiz() {
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('quiz-screen').classList.add('active');
+        currentQuestionIndex = 0;
+        answers.fill(0);
+        showQuestion();
     }
-</style>
+
+    function clearButtonStyles() {
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => {
+            btn.classList.remove('selected');
+            btn.blur();
+        });
+    }
+
+    function showQuestion() {
+        clearButtonStyles();
+        isProcessing = false;
+
+        const qText = document.getElementById('question-text');
+        const qCounter = document.getElementById('question-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const prevBtn = document.getElementById('prev-btn');
+
+        qText.textContent = `${currentQuestionIndex + 1}. ${questions[currentQuestionIndex]}`;
+        qCounter.textContent = `Q ${currentQuestionIndex + 1} / 50`;
+        
+        const progressPercent = ((currentQuestionIndex) / 50) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+
+        if (currentQuestionIndex > 0) {
+            prevBtn.style.display = 'inline-block';
+        } else {
+            prevBtn.style.display = 'none';
+        }
+    }
+
+    function selectOption(score, btnElement) {
+        if (isProcessing) return;
+        isProcessing = true;
+
+        if (btnElement) {
+            btnElement.classList.add('selected');
+        }
+
+        answers[currentQuestionIndex] = score;
+
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < 50) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }, 150);
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showQuestion();
+        }
+    }
+
+    function calculateScores() {
+        const rawScores = { "王様": 0, "子供": 0, "貴族": 0, "社長": 0, "学者": 0 };
+        
+        for (let i = 0; i < 50; i++) {
+            const type = typeMapping[i];
+            rawScores[type] += answers[i];
+        }
+
+        const totalScore = Object.values(rawScores).reduce((a, b) => a + b, 0);
+        
+        const percentages = {};
+        for (const type in rawScores) {
+            percentages[type] = totalScore > 0 ? ((rawScores[type] / totalScore) * 100).toFixed(1) : 0;
+        }
+
+        let mainType = "王様";
+        let maxScore = -1;
+        for (const type in rawScores) {
+            if (rawScores[type] > maxScore) {
+                maxScore = rawScores[type];
+                mainType = type;
+            }
+        }
+
+        return { rawScores, percentages, totalScore, mainType };
+    }
+
+    function showResult() {
+        document.getElementById('quiz-screen').classList.remove('active');
+        document.getElementById('result-screen').classList.add('active');
+
+        const { rawScores, percentages, mainType } = calculateScores();
+
+        document.getElementById('main-type-name').textContent = mainType;
+        document.getElementById('type-description').textContent = typeDescriptions[mainType];
+
+        const scoreListContainer = document.getElementById('score-list');
+        scoreListContainer.innerHTML = '';
+        
+        const typesOrder = ["王様", "子供", "貴族", "社長", "学者"];
+        typesOrder.forEach(type => {
+            const item = document.createElement('div');
+            item.className = 'score-item';
+            item.innerHTML = `
+                <span class="type-title">${type}タイプ</span>
+                <span class="percentage">${percentages[type]}% (${rawScores[type]}点)</span>
+            `;
+            scoreListContainer.appendChild(item);
+        });
+
+        renderChart(percentages);
+        setupLineShare(mainType, percentages);
+    }
+
+    function renderChart(percentages) {
+        const ctx = document.getElementById('charmChart').getContext('2d');
+        
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        chartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['王様', '子供', '貴族', '社長', '学者'],
+                datasets: [{
+                    data: [
+                        percentages['王様'],
+                        percentages['子供'],
+                        percentages['貴族'],
+                        percentages['社長'],
+                        percentages['学者']
+                    ],
+                    backgroundColor: [
+                        '#ff7675',
+                        '#fdcb6e',
+                        '#e84393',
+                        '#6c5ce7',
+                        '#00cec9'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            },
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function setupLineShare(mainType, percentages) {
+        const shareUrl = window.location.href.split('#')[0];
+        const shareText = `【魅力タイプ診断結果】\n私のメイン魅力タイプは「${mainType}タイプ」でした！\n\n【構成比】\n・王様: ${percentages['王様']}%\n・子供: ${percentages['子供']}%\n・貴族: ${percentages['貴族']}%\n・社長: ${percentages['社長']}%\n・学者: ${percentages['学者']}%\n\nあなたは何タイプ？診断はこちら👇\n${shareUrl}`;
+        
+        const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
+        document.getElementById('line-share-link').href = lineUrl;
+    }
+
+    function restartQuiz() {
+        document.getElementById('result-screen').classList.remove('active');
+        document.getElementById('start-screen').classList.add('active');
+    }
+</script>
+
+</body>
+</html>
