@@ -22,7 +22,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを解除 */
+            -webkit-tap-highlight-color: transparent; /* タップ時の枠線を消す */
         }
 
         body {
@@ -150,16 +150,16 @@
             font-weight: 600;
             color: #444;
             cursor: pointer;
-            transition: all 0.2s ease;
             text-align: left;
             display: flex;
             justify-content: space-between;
             align-items: center;
             outline: none;
+            user-select: none;
         }
 
-        /* スマホで押した後に色が付いたままにならないための設定 */
-        @media (hover: hover) {
+        /* パソコン時のみHoverを適用（スマホでの色の残り対策） */
+        @media (hover: hover) and (pointer: fine) {
             .option-btn:hover {
                 border-color: var(--primary-color);
                 background-color: #f7f3fd;
@@ -167,9 +167,11 @@
             }
         }
 
+        /* 押した瞬間のフィードバック */
         .option-btn:active {
             transform: scale(0.98);
-            background-color: #f7f3fd;
+            background-color: #e9e0f5 !important;
+            border-color: var(--primary-color) !important;
         }
 
         .prev-btn {
@@ -451,7 +453,20 @@
         showQuestion();
     }
 
+    function clearButtonStyles() {
+        // 全てのボタンのフォーカスとスタイルを完全にクリアする
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => {
+            btn.blur();
+            btn.style.backgroundColor = '';
+            btn.style.borderColor = '';
+            btn.style.color = '';
+        });
+    }
+
     function showQuestion() {
+        clearButtonStyles(); // 質問表示時にスタイルを必ずリセット
+
         const qText = document.getElementById('question-text');
         const qCounter = document.getElementById('question-counter');
         const progressBar = document.getElementById('progress-bar');
@@ -472,7 +487,7 @@
 
     function selectOption(score, btnElement) {
         if (btnElement) {
-            btnElement.blur(); // タップ時のフォーカス（色の固定）を解除
+            btnElement.blur();
         }
         answers[currentQuestionIndex] = score;
         currentQuestionIndex++;
