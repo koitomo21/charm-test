@@ -185,7 +185,6 @@
             text-decoration: underline;
         }
 
-        /* 🔍 コントラスト・可読性を大幅強化した「結果タイプボックス」 */
         .result-type-box {
             text-align: center;
             background: linear-gradient(135deg, #ffe0e9 0%, #fff2be 100%);
@@ -199,14 +198,14 @@
         .result-type-box .label {
             font-size: 0.95rem;
             font-weight: 700;
-            color: #4a3528; /* くっきり見えやすい深めブラウン */
+            color: #4a3528;
             letter-spacing: 1px;
         }
 
         .result-type-box .type-name {
             font-size: 2.3rem;
             font-weight: 900;
-            color: #b82e51; /* 華やかで視認性の高い深めのローズピンク */
+            color: #b82e51;
             margin: 8px 0;
             letter-spacing: 2px;
             background: rgba(255, 255, 255, 0.7);
@@ -225,7 +224,7 @@
             font-size: 0.9rem;
             font-weight: bold;
             color: #d66880;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 3px 8px rgba(247, 168, 184, 0.15);
         }
 
@@ -284,6 +283,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            margin-top: 0;
         }
 
         .line-share-btn:hover {
@@ -369,10 +369,6 @@
             <div class="label">タイプです！</div>
         </div>
 
-        <div class="screenshot-notice">
-            📸 この画面をスクショして、SNSやLINEでみんなにシェアしてね！✨
-        </div>
-
         <!-- Chart -->
         <div class="chart-container">
             <canvas id="charmChart"></canvas>
@@ -386,6 +382,11 @@
         <!-- Description -->
         <div id="type-description" class="type-desc">
             <!-- Description dynamic -->
+        </div>
+
+        <!-- スクショ案内（LINEシェアボタンの直前に配置） -->
+        <div class="screenshot-notice">
+            📸 この画面をスクショして、SNSやLINEでみんなにシェアしてね！✨
         </div>
 
         <!-- LINE Share Button -->
@@ -609,6 +610,7 @@
             chartInstance.destroy();
         }
 
+        /* 🌸 可愛らしくおしゃれなニュアンス・パステルカラーに調整 */
         chartInstance = new Chart(ctx, {
             type: 'pie',
             data: {
@@ -622,11 +624,11 @@
                         percentages['学者']
                     ],
                     backgroundColor: [
-                        '#c00000',
-                        '#ffc000',
-                        '#7030a0',
-                        '#385723',
-                        '#0070c0'
+                        '#e85a71', /* 王様: 華やかコーラルレッド */
+                        '#fbc02d', /* 子供: ミルキーイエロー */
+                        '#a55eea', /* 貴族: ラベンダーパープル */
+                        '#52b788', /* 社長: ピスタチオグリーン */
+                        '#4ea8de'  /* 学者: ミルキーブルー */
                     ],
                     borderWidth: 2,
                     borderColor: '#ffffff'
