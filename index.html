@@ -22,7 +22,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent; /* タップ時の枠線を消す */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -156,22 +156,20 @@
             align-items: center;
             outline: none;
             user-select: none;
+            transition: all 0.15s ease;
         }
 
-        /* パソコン時のみHoverを適用（スマホでの色の残り対策） */
-        @media (hover: hover) and (pointer: fine) {
-            .option-btn:hover {
-                border-color: var(--primary-color);
-                background-color: #f7f3fd;
-                color: var(--primary-color);
-            }
-        }
-
-        /* 押した瞬間のフィードバック */
-        .option-btn:active {
-            transform: scale(0.98);
-            background-color: #e9e0f5 !important;
+        /* 選択された瞬間のスタイル（しっかり選んだ感） */
+        .option-btn.selected {
+            background-color: var(--primary-color) !important;
             border-color: var(--primary-color) !important;
+            color: #ffffff !important;
+            transform: scale(0.98);
+        }
+
+        .option-btn.selected span {
+            color: #ffffff !important;
+            opacity: 1 !important;
         }
 
         .prev-btn {
@@ -444,6 +442,7 @@
     let currentQuestionIndex = 0;
     let answers = new Array(50).fill(0);
     let chartInstance = null;
+    let isProcessing = false; // 連打・重複タップ防止用
 
     function startQuiz() {
         document.getElementById('start-screen').classList.remove('active');
@@ -454,18 +453,16 @@
     }
 
     function clearButtonStyles() {
-        // 全てのボタンのフォーカスとスタイルを完全にクリアする
         const buttons = document.querySelectorAll('.option-btn');
         buttons.forEach(btn => {
+            btn.classList.remove('selected');
             btn.blur();
-            btn.style.backgroundColor = '';
-            btn.style.borderColor = '';
-            btn.style.color = '';
         });
     }
 
     function showQuestion() {
-        clearButtonStyles(); // 質問表示時にスタイルを必ずリセット
+        clearButtonStyles();
+        isProcessing = false; // 次の質問に進んだらタップ許可
 
         const qText = document.getElementById('question-text');
         const qCounter = document.getElementById('question-counter');
@@ -486,17 +483,25 @@
     }
 
     function selectOption(score, btnElement) {
-        if (btnElement) {
-            btnElement.blur();
-        }
-        answers[currentQuestionIndex] = score;
-        currentQuestionIndex++;
+        if (isProcessing) return; // アニメーション中はタップ無効
+        isProcessing = true;
 
-        if (currentQuestionIndex < 50) {
-            showQuestion();
-        } else {
-            showResult();
+        // タップしたボタンを一瞬ハイライト表示（選んだ感）
+        if (btnElement) {
+            btnElement.classList.add('selected');
         }
+
+        answers[currentQuestionIndex] = score;
+
+        // 0.15秒だけハイライトを見せてから次の問題へスッと移動
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < 50) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }, 150);
     }
 
     function prevQuestion() {
